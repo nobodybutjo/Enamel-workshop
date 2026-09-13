@@ -4,6 +4,15 @@ const axios = require("axios");
 const { Signer } = require("@volcengine/openapi");
 const path = require('path');
 const app = express();
+const path = require('path');
+
+// 1. 托管当前目录下的静态资源（css, js, 图片等）
+app.use(express.static(__dirname));
+
+// 2. 当访问 首页 (/) 时，返回 index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
 app.use(express.static(path.join(__dirname, '../')));
