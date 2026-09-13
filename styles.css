@@ -1,0 +1,1496 @@
+* {
+    /* 强制所有元素使用等宽字体 */
+    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace !important;
+}
+
+/* 即使是按钮和输入框也不放过 */
+button, input, select, textarea, h1, h2, h3, h4, span, div, p {
+    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace !important;
+}
+
+body {
+    font-family: 'Microsoft YaHei', 'SimHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: transparent; /* 让 LiquidChrome 背景效果显示 */
+    color: #333;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 顶部导航栏 */
+.top-navbar {
+    background: #fff;
+    color: #333;
+    height: 60px;               /* 设定固定高度 */
+    padding: 0 30px;            /* 去掉上下 padding，保留左右 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;        /* 垂直居中 */
+    border-bottom: 1px solid #000; /* 1px 黑色底线 */
+    z-index: 1000;
+    gap: 20px;
+}
+
+.nav-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.nav-title h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.nav-mode-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    justify-content: center;
+    height: 100%; /* 关键：撑满高度 */
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+/* 顶部导航按钮 - 描边风格 */
+.nav-btn {
+    background: transparent;    /* 透明背景 */
+    border: 1px solid #333;     /* 黑色描边 */
+    color: #333;                /* 黑色文字 */
+    padding: 8px 20px;
+    border-radius: 4px;         /* 稍微方一点，更现代 */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* 鼠标悬停 */
+.nav-btn:hover {
+    background: #333;           /* 悬停变黑 */
+    color: #fff;                /* 文字变白 */
+    transform: translateY(-1px);
+}
+
+/* 主布局 */
+.main-layout {
+    display: flex;
+    height: calc(100vh - 60px);
+    gap: 0;
+}
+
+/* 左侧面板 */
+.left-panel {
+    width: 280px;
+    background: #fff;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    overflow-y: scroll; 
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+ 
+ /* ...box-shadow 保持不变... */
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 针对 Chrome/Safari 隐藏滚动条 */
+.left-panel::-webkit-scrollbar {
+ display: none;
+}
+
+.panel-section {
+    margin-bottom: 30px;
+}
+
+.panel-section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #333;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.filter-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    flex: 1;
+    min-width: 70px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #666;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    border-color: #333;
+    color: #333;
+}
+
+.filter-btn.active {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+/* 基础材料 */
+.material-swatches {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+/* 2. 单个卡片：左图右文，固定高度 */
+.material-swatch {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 8px;
+    height: 50px;           /* 保持和调色板一样高 */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;              /* 间距保持一致 */
+}
+
+.material-swatch:hover {
+    border-color: #333;
+    transform: translateY(-1px);
+}
+
+/* 选中状态：黑框 */
+.material-swatch.active {
+    background: #fff;
+    border: 1px solid #000;
+}
+
+/* 3. 颜色块：方形 + 高光 */
+.swatch-color {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;     /* 从圆形(50%)改成方圆角(4px) */
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 去掉旧版选中时的光晕效果，保持干净 */
+.material-swatch.active .swatch-color {
+    border-color: rgba(0,0,0,0.1);
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.2);
+}
+
+/* 添加标志性的高光 (完全复用调色板的样式) */
+.swatch-color::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    height: 14px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.8) 0%, 
+        rgba(255, 255, 255, 0.4) 40%, 
+        rgba(255, 255, 255, 0.1) 80%, 
+        rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+}
+
+/* 4. 文字样式：统一字体 */
+.material-swatch span {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* 画布底色控制 */
+.canvas-background-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.canvas-background-controls input[type="color"] {
+    width: 100%;
+    height: 50px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.canvas-background-controls input[type="color"]:hover {
+    border-color: #333;
+}
+
+/* 颜色调色板 */
+.color-palette {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;  /* 间距稍微加大一点，增加呼吸感 */
+    margin-bottom: 10px;
+}
+
+.toggle-indicator {
+    width: 34px;
+    height: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+}
+
+.toggle-indicator::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    transition: all 0.2s ease;
+}
+
+.color-item {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;     /* 圆角稍微大一点 */
+    padding: 8px;           /* 内边距加大，不再那么挤 */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;              /* 图片和字之间的距离加大 */
+    height: 50px;           /* 高度增加，更有分量感 */
+}
+
+.color-item:hover {
+    border-color: #333;
+    transform: translateY(-1px);
+}
+
+.color-item.selected {
+    border-color: #000;
+    background: #f5f5f5;
+}
+
+/* 选中状态：黑框 */
+.color-item.selected {
+    border: 1px solid #000;
+    background: #fff;       /* 保持白底，更干净 */
+}
+
+/* 色块：加大尺寸 + 珐琅高光 */
+.color-swatch {
+    width: 32px !important;    /* 加大到 32px */
+    height: 32px !important;   /* 加大到 32px */
+    min-width: 32px;
+    border-radius: 4px;
+    margin-bottom: 0 !important;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.2);
+}
+
+/* 保持高光 */
+.color-swatch::before {
+    content: '';
+    display: block !important;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    height: 14px;              /* 高光高度也要相应增加 */
+    border-radius: 2px;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.8) 0%, 
+        rgba(255, 255, 255, 0.4) 40%, 
+        rgba(255, 255, 255, 0.1) 80%, 
+        rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 文字区域 */
+.color-info {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* 编码/名称文字：使用等宽字体或现代字体 */
+.color-label {
+    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-size: 14px;        /* 字号加大 */
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* 隐藏次要信息，只保留名字，极度省空间 */
+.color-code, .color-rgb, .color-opacity {
+    display: none;
+}
+
+
+.palette-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.palette-actions.secondary-actions {
+    margin-top: 10px;
+}
+
+.palette-btn {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #666;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.palette-btn:hover {
+    border-color: #333;
+    color: #333;
+}
+
+/* 中央面板 */
+.center-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fafafa;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    height: 100%; /* 关键：撑满高度 */
+}
+
+.mode-btn-wrapper {
+    height: 100%; /* 包装器也要撑满 */
+    display: flex;
+    align-items: center;
+}
+
+.workshop-mode-toggle-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.help-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.help-icon:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+}
+
+/* --- 统一气泡包裹器 --- */
+.mode-btn-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- 气泡基础样式 --- */
+.help-tooltip {
+    position: absolute;
+    background-color: rgba(83, 83, 83, 0.95) !important; /* 深黑灰色底 */
+    color: #ffffff !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    z-index: 9999 !important; /* 确保在最上层 */
+    
+    /* 默认隐藏，并带有位移动画 */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none; /* 防止鼠标不小心划入气泡导致闪烁 */
+}
+
+/* --- 顶部导航栏：向下弹出 --- */
+.top-navbar .help-tooltip {
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, 20px); /* 默认向下偏 10px */
+}
+
+
+
+/* 顶部气泡的小箭头 */
+.top-navbar .help-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%; /* 箭头在上方 */
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: rgba(83, 83, 83, 0.95);
+}
+
+/* --- 底部工具栏：向上弹出 --- */
+.canvas-toolbar .help-tooltip {
+    bottom: 100%;
+    left: 50%;
+    transform: translate(-50%, -20px); 
+}
+
+.canvas-toolbar .mode-btn-wrapper:hover .help-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -15px); 
+}
+
+/* 底部气泡的小箭头 */
+.canvas-toolbar .help-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; /* 箭头在下方 */
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(83, 83, 83, 0.95);
+}
+
+/* --- 核心：Hover 状态下动画复原并显示 --- */
+.mode-btn-wrapper:hover .help-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0); /* 归位到 0，产生微小的平滑浮动感 */
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 40px; /* 增加间距，像参考图那样大气一点 */
+    align-items: center;
+}
+
+.mode-btn {
+    height: 100%;           /* 按钮高度撑满 */
+    display: flex;          /* 让文字垂直居中 */
+    align-items: center;
+    padding: 0 4px;         /* 左右留点空隙 */
+    border: none;
+    border-bottom: 2px solid transparent; /* 预留底线位置，用2px是为了盖住底下的1px */
+    background: transparent;
+    color: #999;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    margin-bottom: -1px;    /* 关键技巧：向下偏移1px，盖住导航栏的底线 */
+}
+
+.mode-btn:hover {
+    color: #333;
+}
+
+/* 选中状态 */
+.mode-btn.active {
+    color: #000;
+    font-weight: 700;       /* 加粗 */
+    border-bottom: 2px solid #000; /* 黑色底线 */
+    background: transparent;
+}
+
+.mode-caption {
+    font-size: 12px;
+    color: #777;
+    flex: 1;
+}
+
+.pattern-controls {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.pattern-type-group,
+.category-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pattern-type-group label,
+.category-group label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    min-width: 70px;
+}
+
+.pattern-buttons,
+.category-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.pattern-btn,
+.category-btn {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #666;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.pattern-btn:hover,
+.category-btn:hover {
+    border-color: #333;
+    color: #333;
+}
+
+.pattern-btn.active,
+.category-btn.active {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+/* 画布区域 */
+.canvas-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.canvas-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    position: relative; /* 必须添加这一行，作为加载提示的定位基准 */
+    min-height: 400px;
+    background-image: 
+        linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    padding: 20px; 
+}
+
+#mainCanvas {
+    max-width: 100%;
+    max-height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    /* 删掉了这里的 filter: drop-shadow 行 */
+    display: block; 
+}
+
+.canvas-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.toolbar-btn {
+    padding: 10px 20px;
+    border: 1px solid #333;      /* 改成深灰色描边，或者用你的主题色 */
+    background: transparent;     /* 背景透明 */
+    color: #333;                 /* 文字改成黑色/深灰 */
+    border-radius: 4px;          /* 圆角稍微小一点，更硬朗现代 */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* 鼠标悬停状态：变成实心黑（或主题色）+ 白字 */
+.toolbar-btn:hover {
+    background: #333;            /* 鼠标放上去变黑 */
+    border-color: #333;
+    color: #fff;                 /* 文字变白 */
+    transform: translateY(-1px);
+}
+
+.ai-mode-notice {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    background: #f5f5f5;
+    color: #333;
+    font-size: 13px;
+    display: none;
+}
+
+body.ai-mode-active #aiModeNotice {
+    display: block;
+}
+
+body.ai-mode-active #uploadBtn {
+    display: none;
+}
+
+
+/* AI模式下隐藏图案类型和类别按钮 */
+body.ai-mode-active .pattern-controls {
+    display: none;
+}
+
+/* 默认手动模式：显示生成设计和上传文件按钮 */
+#generateBtn,
+#uploadBtn {
+    display: inline-block;
+}
+
+/* 默认隐藏 AI 模式特有的两个按钮 */
+#generateAIBtn, 
+#ichInspirationBtn {
+    display: none;
+}
+
+/* AI 模式激活时：隐藏手动生成的两个按钮，显示 AI 生成的两个按钮 */
+body.ai-mode-active #generateBtn,
+body.ai-mode-active #uploadBtn {
+    display: none !important;
+}
+
+body.ai-mode-active #generateAIBtn,
+body.ai-mode-active #ichInspirationBtn {
+    display: inline-block !important;
+}
+
+/* 烧制预览按钮在任何模式下都始终显示 */
+#generatePreviewBtn {
+    display: inline-block;
+}
+
+/* --- 找到这部分并替换 --- */
+.preview-loading {
+    text-align: center;
+    color: #888;
+    z-index: 10;
+    padding: 20px;
+    border-radius: 8px;
+    /* 删除了之前的 absolute 定位和居中代码 */
+    display: block; 
+    width: 100%;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #333;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 按钮基础显示 */
+#generateBtn, #uploadBtn, #generatePreviewBtn {
+    display: inline-block;
+}
+
+#titleText {
+    font-weight: 700;
+    font-size: 20px;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* 右侧面板 */
+.right-panel {
+    width: 320px;
+    background: #fff;
+    border-left: 1px solid #e0e0e0;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.right-panel h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #333;
+}
+
+.control-group {
+    margin-bottom: 25px;
+}
+
+.control-group > label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.control-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #555;
+    position: relative;
+}
+
+.value-display {
+    background: #333;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* 尺寸输入 */
+.size-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.size-inputs input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.size-inputs input:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.size-inputs span {
+    color: #666;
+    font-size: 14px;
+}
+
+/* 滑块 */
+input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e0e0e0;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 10px 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #333;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 6px rgba(212, 175, 55, 0.4);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #333;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 6px rgba(212, 175, 55, 0.4);
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* 单选按钮组 */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.radio-label:hover {
+    border-color: #333;
+    background: #fff8e1;
+}
+
+.radio-label input[type="radio"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"]:checked + span {
+    color: #333;
+    font-weight: 700;
+}
+
+.radio-label:has(input[type="radio"]:checked) {
+    border-color: #333;
+    background: #fff8e1;
+}
+
+/* 预览窗口 */
+.preview-window {
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: 
+        linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.05) 1px, transparent 1px);
+    background-size: 15px 15px;
+}
+
+#previewCanvas {
+    max-width: 100%;
+    max-height: 180px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b8941f;
+}
+
+/* 模态框样式 */
+.modal {
+    display: none; /* 初始隐藏 */
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    
+    /* 核心修复：实现垂直水平双重居中 */
+    display: none; /* 注意：当 JS 把 display 改为 block 时，下面的 flex 才会生效 */
+    align-items: center;     /* 垂直居中 */
+    justify-content: center;  /* 水平居中 */
+}
+
+.modal[style*="display: block"] {
+    display: flex !important;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #333;
+    color: white;
+    border-radius: 10px 10px 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.close-modal {
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    opacity: 0.7;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-footer .btn {
+    /* 核心修改：加大内边距和字号 */
+    padding: 8px 20px; 
+    font-size: 14px;
+    font-weight: 500;
+    
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 40px; /* 设定最小宽度，防止文字少时按钮太短 */
+    border: 1px solid #000;
+}
+
+.btn-primary {
+    background-color: transparent !important;
+    color: #666 !important;
+    border: 1px solid #ccc !important;
+}
+
+.btn-primary:hover {
+    border-color: #000 !important;
+    color: #000 !important;
+}
+.btn-secondary {
+    background-color: transparent !important;
+    color: #666 !important;
+    border: 1px solid #ccc !important;
+}
+
+.btn-secondary:hover {
+    border-color: #000 !important;
+    color: #000 !important;
+}
+/* 颜色库网格 */
+.color-library {
+    margin-bottom: 20px;
+}
+
+.color-library h4 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 14px;
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.color-library-item {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    /* 移除所有阴影和背景渐变 */
+    box-shadow: none;
+    background-image: none;
+}
+
+.color-library-item::before {
+    content: '';
+    position: absolute;
+    top: 8%;
+    left: 8%;
+    right: 8%;
+    height: 35%;
+    border-radius: 6px;
+    /* 白色高光效果，下方渐变透明 */
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.7) 0%, 
+        rgba(255, 255, 255, 0.5) 30%,
+        rgba(255, 255, 255, 0.2) 60%,
+        rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.color-library-item::after {
+    display: none;
+}
+
+.color-library-item:hover {
+    transform: scale(1.1);
+    border-color: #333;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+}
+
+.color-library-item.selected {
+    border-color: #333;
+    border-width: 3px;
+}
+
+.enamel-label {
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 4px 6px;
+    font-size: 10px;
+    line-height: 1.2;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.enamel-code {
+    font-weight: 700;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.enamel-name {
+    font-size: 10px;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.color-card-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.color-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fffdfa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.color-card h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.color-card p {
+    font-size: 12px;
+    color: #777;
+    margin: 0;
+}
+
+.color-card-swatches {
+    display: flex;
+    gap: 6px;
+}
+
+.color-card-swatches span {
+    flex: 1;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    /* 移除所有阴影和背景渐变 */
+    box-shadow: none;
+    background-image: none;
+}
+
+.color-card-swatches span::before {
+    content: '';
+    position: absolute;
+    top: 8%;
+    left: 8%;
+    right: 8%;
+    height: 35%;
+    border-radius: 6px;
+    /* 白色高光效果，下方渐变透明 */
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.7) 0%, 
+        rgba(255, 255, 255, 0.5) 30%,
+        rgba(255, 255, 255, 0.2) 60%,
+        rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.color-card-swatches span::after {
+    display: none;
+}
+
+.color-card button {
+    margin-top: 5px;
+    border: none;
+    background: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.color-card button:hover {
+    opacity: 0.85;
+}
+
+.custom-color-picker {
+    margin-top: 20px;
+}
+
+.custom-color-picker h4 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 14px;
+}
+
+.custom-color-picker input[type="color"] {
+    width: 100%;
+    height: 50px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.custom-color-picker input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-group textarea,
+.form-group select,
+.form-group input[type="text"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+.filter-btn.active,
+.pattern-btn.active,
+.category-btn.active,
+.nav-btn:active {  /* 包括点击瞬间的效果 */
+    background: transparent !important; /* 强制去底色 */
+    color: #000 !important;             /* 文字变黑 */
+    border: 1px solid #000 !important;  
+    font-weight: 700 !important;        /* 文字加粗 */
+    box-shadow: none !important;
+}
+
+/* 稍微调整一下普通状态，让它们和新风格统一 */
+.filter-btn, .pattern-btn, .category-btn {
+    border: 1px solid #ddd; /* 平时是浅灰边框 */
+    color: #666;
+}
+.filter-btn:hover, .pattern-btn:hover, .category-btn:hover {
+    border-color: #333;
+    color: #333;
+}
+
+#wearPreviewBtn {
+  margin-top: 24px;
+}
+
+/* 默认：隐藏 AI 特有按钮 */
+#generateAIBtn, 
+#ichInspirationBtn,
+.ai-mode-active #generateBtn,
+.ai-mode-active #uploadBtn,
+.ai-mode-active .pattern-controls {
+    display: none !important;
+}
+
+/* AI 模式激活时：显示 AI 按钮，显示提示 */
+body.ai-mode-active #generateAIBtn,
+body.ai-mode-active #ichInspirationBtn {
+    display: inline-block !important;
+}
+
+body.ai-mode-active #aiModeNotice {
+    display: block !important;
+}
+
+/* 按钮基础显示 */
+#generateBtn, #uploadBtn, #generatePreviewBtn {
+    display: inline-block;
+}
+
+#titleText {
+    font-weight: 700;
+    font-size: 20px;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* 非遗灵感卡片布局 */
+.ich-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;    /* 强制图片保持 1:1 正方形 */
+    object-fit: cover;      /* 确保图片充满容器且不拉伸变形 */
+    display: block;
+}
+.ich-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 10px;   
+}
+.ich-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+.ich-card:hover {
+    border-color: #000;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.ich-info {
+    padding: 10px;
+    text-align: center;
+}
+.ich-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 13px;
+    color: #333;
+}
+.ich-info span {
+    font-size: 11px;
+    color: #999;
+}
+
+/* 解决生成设计时画布跳动问题 */
+.loading {
+    position: absolute !important; /* 绝对定位，脱离文档流 */
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.85); /* 半透明白底 */
+    padding: 30px;
+    border-radius: 12px;
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* --- 标准模式底色：全宽横条 --- */
+#standardBgControl {
+    width: 100%;
+}
+
+#canvasBackgroundColor {
+    display: block;
+    width: 100%;       /* 撑满横向 */
+    height: 40px;      /* 高度增加，方便点击 */
+    padding: 2px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #fff;
+}
+
+/* --- 工作坊模式底色：平分撑满 --- */
+#workshopBgControl {
+    width: 100%;
+}
+
+.workshop-bg-btns {
+    display: flex;     /* 使用弹性布局 */
+    gap: 10px;         /* 两个按钮之间的间距 */
+    width: 100%;
+}
+
+.bg-choice-btn {
+    flex: 1;           /* 关键：让两个按钮平分宽度 */
+    height: 45px;      /* 按钮高度 */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 白色按钮样式 */
+.bg-choice-btn[data-color="#ffffff"] {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+}
+
+/* 黑色按钮样式 */
+.bg-choice-btn[data-color="#000000"] {
+    background-color: #000000;
+    border: 1px solid #ddd;
+}
+
+/* 选中后的高亮效果 */
+.bg-choice-btn.active {
+    outline: 1px solid #000000; 
+}

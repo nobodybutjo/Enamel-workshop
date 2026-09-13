@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的珐琅工坊 Beta</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-navbar">
+        <div class="nav-title">
+            <h1>我的珐琅工坊</h1>
+        </div>
+        
+        <div class="nav-mode-section">
+    <div class="mode-buttons" id="modeButtons">
+        <!-- 手动模式 -->
+        <div class="mode-btn-wrapper">
+            <button class="mode-btn active" data-mode="manual">手动模式</button>
+            <div class="help-tooltip">基于预设图形或上传本地文件完成设计</div>
+        </div>
+        <!-- AI模式 -->
+        <div class="mode-btn-wrapper">
+            <button class="mode-btn" data-mode="ai">AI模式</button>
+            <div class="help-tooltip">调用模型或非遗灵感实现创意探索</div>
+        </div>
+        <!-- 工作坊模式 -->
+        <div class="mode-btn-wrapper">
+            <button class="mode-btn" data-mode="workshop">工作坊模式</button>
+            <div class="help-tooltip">可根据需求定制，此处演示湿填图案与散点背景</div>
+        </div>
+    </div>
+</div>
+        
+
+        <div class="nav-buttons">
+            <button class="nav-btn" id="loadBtn">加载</button>
+            <button class="nav-btn" id="saveBtn">保存</button>
+            <button class="nav-btn" id="exportBtn">导出</button>
+        </div>
+    </div>
+    <input type="file" id="projectFileInput" accept="application/json" style="display: none;">
+
+    <div class="main-layout">
+        <!-- 左侧控制面板 -->
+        <div class="left-panel">
+            <!-- 设计类型 -->
+            <div class="panel-section">
+                <h3>设计类型</h3>
+                <!-- 普通模式的设计类型 -->
+                <div class="filter-group" id="normalDesignType">
+                    <div class="filter-options">
+                        <button class="filter-btn active" data-design-type="pendant">吊坠</button>
+                        <button class="filter-btn " data-design-type="free">自由</button>
+                    </div>
+                </div>
+                <!-- 吊坠子选项 -->
+                <div class="filter-group" id="pendantOptions">
+                    <label>吊坠形状</label>
+                    <div class="filter-options">
+                        <button class="filter-btn active" data-pendant-shape="circle">圆形</button>
+                        <button class="filter-btn" data-pendant-shape="ellipse">椭圆</button>
+                        <button class="filter-btn" data-pendant-shape="ring">圆环</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 基础材料 -->
+            <div class="panel-section" id="materialSection">
+                <h3>基础材料</h3>
+                <div class="material-swatches">
+                      <div class="material-swatch active" data-material="silver">
+                        <div class="swatch-color" style="background: #c0c0c0;"></div>
+                        <span>银</span>
+                    </div>
+                    <div class="material-swatch" data-material="copper">
+                        <div class="swatch-color" style="background: #b87333;"></div>
+                        <span>铜</span>
+                    </div>
+                    <div class="material-swatch" data-material="gold">
+                        <div class="swatch-color" style="background: #d4af37;"></div>
+                        <span>金</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. 删除基础材料 panel-section -->
+
+<div class="panel-section">
+    <h3>画布底色</h3>
+    <!-- 标准模式：颜色选择器 -->
+    <div id="standardBgControl">
+        <input type="color" id="canvasBackgroundColor" value="#ffffff">
+    </div>
+    
+    <!-- 工作坊模式：仅黑白切换 -->
+    <div id="workshopBgControl" style="display: none;">
+        <div class="workshop-bg-btns">
+            <button class="bg-choice-btn active" data-color="#ffffff" title="白色"></button>
+            <button class="bg-choice-btn" data-color="#000000" title="黑色"></button>
+        </div>
+    </div>
+</div>
+
+            <!-- 颜色调色板 -->
+            <div class="panel-section">
+                <h3>调色板</h3>
+                <div class="color-palette" id="colorPalette">
+                    <!-- 颜色将通过JavaScript动态添加 -->
+                </div>
+                <div class="palette-actions">
+                    <button class="palette-btn" id="addColorBtn">+ 添加</button>
+                    <button class="palette-btn" id="removeColorBtn">- 删除</button>
+                </div>
+                <div class="palette-actions secondary-actions">
+                    <button class="palette-btn" id="colorCardBtn">预设色卡</button>
+                    <button class="palette-btn" id="extractFromImageBtn">参考图取色</button>
+                </div>
+                <input type="file" id="colorReferenceInput" accept="image/*" style="display: none;">
+                
+                <!-- 颜色选择对话框 -->
+                <div id="colorPickerModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>选择颜色</h3>
+                            <span class="close-modal">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="color-library">
+                                <h4>颜色库</h4>
+                                <div class="color-grid" id="colorLibraryGrid">
+                                    <!-- 颜色将通过JavaScript动态添加 -->
+                                </div>
+                            </div>
+                            <div class="custom-color-picker">
+                                <h4>自定义颜色</h4>
+                                <input type="color" id="customColorInput" value="#ff0000">
+                                <input type="text" id="colorNameInput" placeholder="颜色名称（可选）">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" id="confirmColorBtn">确认</button>
+                            <button class="btn btn-secondary" id="cancelColorBtn">取消</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 预设色卡对话框 -->
+                <div id="colorCardModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>官方色卡</h3>
+                            <span class="close-modal">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="color-card-list" id="colorCardList">
+                                <!-- 色卡将由脚本填充 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中央设计区域 -->
+        <div class="center-panel">
+            <!-- 图案类型和类别选择 -->
+            <div class="pattern-controls">
+                <div class="pattern-type-group">
+                    <label>技法类型</label>
+                    <div class="pattern-buttons">
+                        <button class="pattern-btn active" data-type="positive">碎料</button>
+                        <button class="pattern-btn" data-type="wet">掐丝</button>
+                    </div>
+                </div>
+                <div class="category-group">
+                    <label>图案类型</label>
+                    <div class="category-buttons">
+                        <button class="category-btn active" data-category="plants">植物</button>
+                        <button class="category-btn" data-category="animals">动物</button>
+                        <button class="category-btn" data-category="geometric">几何</button>
+                        <button class="category-btn" data-category="letters">字母</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主画布区域 -->
+            <div class="canvas-area">
+                <div class="canvas-wrapper">
+                    <canvas id="mainCanvas"></canvas>
+                    <div id="loadingIndicator" class="loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>正在生成图像...</p>
+                    </div>
+                </div>
+               <div class="canvas-toolbar">
+    <!-- 默认模式下的按钮 -->
+    <div id="defaultToolbar">
+        <button class="toolbar-btn" id="generateBtn">生成设计</button>
+        <button class="toolbar-btn" id="generateAIBtn">AI生成设计</button>
+        <button class="toolbar-btn" id="ichInspirationBtn">非遗灵感</button>
+        <button class="toolbar-btn" id="uploadBtn">上传文件</button>
+    </div>
+    
+    <!-- 工作坊模式下的专用按钮 (默认隐藏) -->
+    <div id="workshopToolbar" style="display: none;">
+        <button class="toolbar-btn" id="workshopNextBtn">切换图案</button>
+    </div>
+
+    <!-- 共有按钮 -->
+    <div class="mode-btn-wrapper">
+    <button class="toolbar-btn preview-btn" id="generatePreviewBtn">烧制预览</button>
+
+    <div class="help-tooltip" id="previewTooltip">注：目前只支持银胎吊坠预览</div>
+</div>
+    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+</div>
+                
+                <!-- AI生成配置对话框 -->
+                <div id="aiGenerateModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>AI图案生成</h3>
+                            <span class="close-modal">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>提示词（Prompt）</label>
+                                <textarea id="aiPromptInput" rows="3" placeholder="例如：a beautiful flower, colorful butterfly, geometric pattern..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>API类型</label>
+                                <select id="aiApiType">
+                                    <option value="pollinations">Pollinations.ai </option>
+                                    <option value="demo">本地演示模式</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="apiKeyGroup" style="display: none;">
+                                <label>API Key</label>
+                                <div style="display: flex; gap: 5px;">
+                                    <input type="password" id="apiKeyInput" placeholder="输入您的API Key" style="flex: 1;">
+                                    <button type="button" class="btn btn-secondary" id="toggleApiKeyBtn" style="padding: 8px 12px; white-space: nowrap;">显示</button>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" id="confirmAIGenerateBtn">生成</button>
+                            <button class="btn btn-secondary" id="cancelAIGenerateBtn">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- 非遗灵感选择弹窗 -->
+<div id="ichModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>非遗灵感</h3>
+            <span class="close-modal" id="closeIchModal" style="cursor:pointer;">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="ich-grid">
+                <!-- 文物 1 -->
+                <!-- data-motif：点击后贴到画布上的图 | img src：弹窗里展示给用户看的照片 -->
+                <div class="ich-card" data-motif="images/motif_lotus.jpg">
+                    <img src="images/lotus_relic.jpg" alt="缠枝莲纹炉">
+                    <div class="ich-info">
+                        <h4>明宣德 掐丝珐琅缠枝莲纹炉</h4>
+                        <span>百代连绵</span>
+                    </div>
+                </div>
+                <!-- 文物 2 -->
+                <div class="ich-card" data-motif="images/motif_peach.jpg">
+                    <img src="images/peach_relic.jpg" alt="桃式茶盘">
+                    <div class="ich-info">
+                        <h4>清乾隆 铜胎画珐琅桃式茶盘</h4>
+                        <span>春和景明</span>
+                    </div>
+                </div>
+                <!-- 文物 3 -->
+                <div class="ich-card" data-motif="images/motif_flower.jpg">
+                    <img src="images/flower_relic.jpg" alt="团花纹六方瓶">
+                    <div class="ich-info">
+                        <h4>乾隆款画珐琅团花盖罐</h4>
+                        <span>团花锦簇</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- 右侧参数面板 -->
+        <div class="right-panel">
+            <h2>参数调节</h2>
+            
+            <!-- 设计尺寸 -->
+            <div class="control-group">
+                <label>设计尺寸</label>
+                <div class="size-inputs">
+                    <input type="number" id="designWidth" value="50" min="10" max="200" step="1">
+                    <span>×</span>
+                    <input type="number" id="designHeight" value="50" min="10" max="200" step="1">
+                    <span>mm</span>
+                </div>
+            </div>
+
+            <!-- 颜色数量 -->
+            <div class="control-group">
+                <label for="colorCount">
+                    <span>颜色数量</span>
+                    <span class="value-display" id="colorCountValue">4</span>
+                    <span class="help-icon" data-help="colorCount">?</span>
+                    <div class="help-tooltip" id="helpColorCount">在调色板中调用的颜色数量</div>
+                </label>
+                <input type="range" id="colorCount" min="2" max="10" value="4" step="1">
+                <div class="range-labels">
+                    <span>2</span>
+                    <span>10</span>
+                </div>
+            </div>
+
+            <!-- 点大小 -->
+            <div class="control-group">
+                <label for="dotSize">
+                    <span>点大小</span>
+                    <span class="value-display" id="dotSizeValue">5</span>
+                </label>
+                <input type="range" id="dotSize" min="1" max="10" value="5" step="0.5">
+                <div class="range-labels">
+                    <span>1</span>
+                    <span>10</span>
+                </div>
+            </div>
+
+            <!-- 点密度 -->
+            <div class="control-group">
+                <label for="dotDensity">
+                    <span>点密度</span>
+                    <span class="value-display" id="dotDensityValue">中等</span>
+                </label>
+                <input type="range" id="dotDensity" min="10" max="100" value="21" step="1">
+                <div class="range-labels">
+                    <span>稀疏</span>
+                    <span>密集</span>
+                </div>
+            </div>
+
+            <!-- 随机性 -->
+            <div class="control-group">
+                <label for="randomness">
+                    <span>随机性</span>
+                    <span class="value-display" id="randomnessValue">3</span>
+                </label>
+                <input type="range" id="randomness" min="1" max="10" value="3" step="0.5">
+                <div class="range-labels">
+                    <span>1</span>
+                    <span>10</span>
+                </div>
+            </div>
+
+            <!-- 图案大小 -->
+            <div class="control-group">
+                <label for="patternScale">
+                    <span>图案大小</span>
+                    <span class="value-display" id="patternScaleValue">100%</span>
+                </label>
+                <input type="range" id="patternScale" min="50" max="200" value="100" step="1">
+                <div class="range-labels">
+                    <span>50%</span>
+                    <span>200%</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- OGL 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/ogl@0.0.7/dist/ogl.umd.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

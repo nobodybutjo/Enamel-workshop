@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>烧制预览</title>
+  <link rel="stylesheet" href="./styles.css">
+
+  <style>
+    body {
+      margin: 0;
+      background: #f6f6f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .preview-wrapper {
+      text-align: center;
+      display: flex;
+      flex-direction: column;   /* 确保内容从上往下堆叠 */
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px; /* 标题和文字的间距 */
+      letter-spacing: 1px;
+    }
+
+    /* 强制提示文字处于标题下方，不再重叠 */
+    .preview-loading {
+      position: relative !important; /* 强制重置样式 */
+      top: auto !important;
+      left: auto !important;
+      transform: none !important;
+      background: transparent !important;
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 30px;
+      animation: blink 1.2s infinite;
+      display: block;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .result-img {
+      max-width: 420px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      display: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .error {
+      color: #c0392b;
+      margin-top: 20px;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="preview-wrapper">
+  <!-- 标题 -->
+  <div class="title" id="titleText">效果预览准备中，请稍候</div>
+
+  <!-- 提示文字：初始显示 -->
+  <div class="preview-loading" id="loadingText">正在生成烧制效果...</div>
+
+  <!-- 结果图片：初始隐藏 -->
+  <img id="resultImg" class="result-img" style="display: none;"/>
+
+  <!-- 佩戴按钮：初始隐藏 -->
+  <button id="wearPreviewBtn" class="toolbar-btn" style="display:none; margin-top: 24px;">
+    佩戴效果
+  </button>
+
+  <!-- 错误提示 -->
+  <div class="error" id="errorText">生成失败，请重试</div>
+</div>
+
+<script>
+
+async function run() {
+  const loadingText = document.getElementById("loadingText");
+  const titleText = document.getElementById("titleText");
+  const resultImg = document.getElementById("resultImg");
+  const wearBtn = document.getElementById("wearPreviewBtn");
+
+  try {
+    const designBase64 = sessionStorage.getItem("designImage");
+    // 获取当前形状模式
+    const pendantShape = sessionStorage.getItem("pendantShape") || "ring"; 
+    
+    if (!designBase64) {
+      showError("未找到设计图");
+      return;
+    }
+
+    const base64Data = designBase64.split(",")[1];
+
+    // 1️⃣ 上传到 ImgBB
+    const imgbbKey = "963202636865c819adc9561c643bf0b4";
+    const uploadRes = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbKey}`, {
+      method: "POST",
+      body: new URLSearchParams({ image: base64Data })
+    });
+
+    const uploadData = await uploadRes.json();
+    if (!uploadData.data || !uploadData.data.url) {
+      showError("图床上传失败");
+      return;
+    }
+
+    const designUrl = uploadData.data.url;
+
+    // 2️⃣ 调用 Node 服务生成烧制预览
+    const renderRes = await fetch("http://localhost:3000/api/render-preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ designUrl, pendantShape })
+    });
+
+    const renderData = await renderRes.json();
+
+    if (renderData.image) {
+      // ✅ 渲染逻辑：图片赋值
+      titleText.innerText = "烧制效果预览";
+      resultImg.src = renderData.image;
+
+      // 关键：等图片真正加载完后再隐藏文字并显示图片
+      resultImg.onload = () => {
+        loadingText.style.display = "none"; 
+        resultImg.style.display = "block";
+        resultImg.style.opacity = "1";
+
+        // --- 核心修改点 ---
+        // 只有当不是“自由模式”时，才显示“佩戴效果”按钮
+        if (pendantShape !== "free") {
+          wearBtn.style.display = "inline-block";
+        } else {
+          wearBtn.style.display = "none";
+        }
+        // ----------------
+      };
+      
+    } else {
+      showError("生成失败");
+    }
+
+  } catch (err) {
+    showError("生成失败，请检查网络");
+  }
+}
+
+// 佩戴效果按钮点击事件
+document.getElementById("wearPreviewBtn").addEventListener("click", async () => {
+  const loadingText = document.getElementById("loadingText");
+  const resultImg = document.getElementById("resultImg");
+  const wearBtn = document.getElementById("wearPreviewBtn");
+  const titleText = document.getElementById("titleText"); // 获取标题元素
+  const pendantUrl = resultImg.src;
+
+  // 1. 更新提示文字并重新显示
+  loadingText.innerText = "正在生成佩戴效果...";
+  loadingText.style.display = "block";
+  
+  // 2. 将当前图片设为半透明，告知用户正在处理
+  resultImg.style.opacity = "0.5";
+  wearBtn.style.display = "none"; // 处理期间隐藏按钮
+
+  try {
+    const res = await fetch("http://localhost:3000/api/wear-preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pendantUrl })
+    });
+
+    const data = await res.json();
+
+    if (data.image) {
+      // 3. 替换新图片
+      resultImg.src = data.image;
+      
+      // 4. 新图片加载完后的处理
+      resultImg.onload = () => {
+        loadingText.style.display = "none";
+        resultImg.style.opacity = "1";
+        titleText.innerText = "佩戴效果预览"; // ✅ 关键修改：图片加载好后修改标题
+      };
+    } else {
+      alert("佩戴效果生成失败");
+      loadingText.style.display = "none";
+      resultImg.style.opacity = "1";
+      wearBtn.style.display = "inline-block";
+    }
+  } catch (e) {
+    alert("请求失败，请检查网络");
+    loadingText.style.display = "none";
+    resultImg.style.opacity = "1";
+    wearBtn.style.display = "inline-block";
+  }
+});
+
+function showError(msg) {
+  document.getElementById("loadingText").style.display = "none";
+  document.getElementById("errorText").innerText = msg;
+  document.getElementById("errorText").style.display = "block";
+}
+
+// 启动执行
+run();
+
+</script>
+
+</body>
+</html>
