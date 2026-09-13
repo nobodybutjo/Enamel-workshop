@@ -2,11 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const { Signer } = require("@volcengine/openapi");
-
+const path = require('path');
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
-
+app.use(express.static(path.join(__dirname, '../')));
 console.log("🔥 即梦4.0 SDK 稳定整合版启动");
 
 // 填入你的 Access Key 和 Secret Key
@@ -257,3 +257,5 @@ app.post("/api/generate-heritage", async (req, res) => {
 app.listen(3000, () => {
   console.log("🌍 Server running on http://localhost:3000");
 });
+
+module.exports = app;
